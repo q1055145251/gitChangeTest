@@ -3,8 +3,12 @@ package com.laituo.cmsFile.pojo;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.laituo.cmsFile.common.R;
+import com.laituo.cmsFile.common.ResultCode;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Range;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
@@ -15,19 +19,24 @@ import java.util.Date;
 @JsonIgnoreProperties(value = {"createdDate", "updateDate","updateTimestamp","createdTimestamp","flag","schoolUserId","phone","openid"})
 public class Permission {
 
-    @TableId(value = "permission_id",type= IdType.AUTO)
-    private Integer permissionId;
+    @TableId(value = "id",type= IdType.AUTO)
+    private Integer Id;
 
+    @NotNull
     private String permissionCode;
-
+    @NotNull
     private String permissionName;
 
-    private Integer fatherId;
+    private Integer fatherId=0;
 
-    private String path;
 
-    private Integer isMenu;
 
+    @NotNull
+    private String path="/";
+    @Range(min=0,max=1,message = "请输入正确的isMenu")
+    private Integer isMenu=1;
+
+    @TableLogic(value = "0",delval = "NULL")
     private Integer flag;
 
     @TableField(fill= FieldFill.INSERT)
@@ -42,5 +51,15 @@ public class Permission {
     @TableField(fill= FieldFill.INSERT_UPDATE)
     private Integer updateTimestamp;
 
+
+
+    public void setPath(@NotNull String path) {
+        if (path.isEmpty()){
+            this.path = "/";
+        }
+        if (path.charAt(0)!='/'){//如果第一个不是/
+            this.path="/"+path;
+        }
+    }
 
 }

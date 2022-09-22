@@ -12,11 +12,6 @@ import java.util.List;
 @Mapper
 public interface ProjectMapper extends BaseMapper<Project> {
 
-    @Select("SELECT permission_name as name,path FROM `user` INNER JOIN user_permission INNER JOIN permission WHERE id=#{id} " +
-            "AND id=user_id AND user_permission.permission_id=permission.permission_id AND father_id=0")
-    List<Project> getMenuList(Integer id);
 
-    @Select("SELECT name,path FROM project")
-    List<Project> getMenuList();
 
 }

@@ -1,5 +1,6 @@
 package com.laituo.cmsFile.shiro;
 
+import com.laituo.cmsFile.pojo.User;
 import com.laituo.cmsFile.utils.JwtUtils;
 import lombok.Data;
 import org.apache.shiro.authc.HostAuthenticationToken;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtToken implements HostAuthenticationToken, RememberMeAuthenticationToken {
     private String token;
+
+    private User user;
+
     private char[] password;
     private boolean rememberMe;
     private String host;
@@ -46,6 +50,14 @@ public class JwtToken implements HostAuthenticationToken, RememberMeAuthenticati
 
     public JwtToken(String token, String password) {
         this(token, (char[])(password != null ? password.toCharArray() : null), false, (String)null);
+    }
+
+    public JwtToken(String token, User user) {
+        this.host=null;
+        this.rememberMe=false;
+        this.token=token;
+        this.password=null;
+        this.user=user;
     }
 
     public JwtToken(String token, char[] password, String host) {

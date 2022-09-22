@@ -1,10 +1,12 @@
 package com.laituo.cmsFile.shiro;
 
 
+import com.laituo.cmsFile.pojo.Permission;
 import com.laituo.cmsFile.service.PermissionService;
 import com.laituo.cmsFile.service.RoleService;
 import com.laituo.cmsFile.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -46,9 +48,11 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         Claims user = (Claims) principalCollection.iterator().next();//获取登录账号
-        Integer id = (Integer) user.get("id");
-        Set<String> roleNames = roleService.getSet(id);//查询角色
-        Set<String> permission = permissionService.getSet(id);//查询权限
+        String uid = (String) user.get("uid");
+        Set<String> roleNames = roleService.getSet(uid);//查询角色
+
+        Set<String> permission = permissionService.getSet(uid);//获取所有权限
+
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.setRoles(roleNames);
         info.setStringPermissions(permission);
@@ -64,7 +68,7 @@ public class MyRealm extends AuthorizingRealm {
         if (!JwtUtils.checkToken(token)){
             return null;
         }
-        return new SimpleAuthenticationInfo(claims, claims.get("openid"), getName());
+        return new SimpleAuthenticationInfo(claims, claims.get("id"), getName());
     }
 
 //    @Override

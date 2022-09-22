@@ -60,13 +60,11 @@ public class ShrioConfig {
         Map<String, String> filterMap = new LinkedHashMap<>();
 
         //anon jwt自定义过滤器无需登录
-//        filterMap.put("/user/token", "anon");
+
 //        filterMap.put("/test/**", "jwt");//需要token
 //        filterMap.put("/user/**","jwt");
         filterMap.put("/user/**","jwt");
         filterMap.put("/role/**","jwt");
-        filterFactoryBean.setLoginUrl("/login");
-        filterFactoryBean.setUnauthorizedUrl("/login");
         filterFactoryBean.setFilterChainDefinitionMap(filterMap);
         return filterFactoryBean;
     }

@@ -18,8 +18,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.lang.reflect.Field;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @RestControllerAdvice
@@ -105,10 +110,12 @@ class GlobalExceptionHandler {
         return R.fail(ResultCode.Error,"时间转换错误");
     }
 
-
-
-
-
+    @ExceptionHandler(value = SQLIntegrityConstraintViolationException.class)
+    @ResponseBody
+    public R handler(SQLIntegrityConstraintViolationException e){
+        System.out.println(e.getMessage());
+        return R.fail(ResultCode.BAD,"触发唯一键");
+    }
 
 
 

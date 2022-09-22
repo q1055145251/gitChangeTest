@@ -8,9 +8,4 @@ import com.laituo.cmsFile.pojo.User;
 import java.util.List;
 
 public interface ProjectService {
-    R addPro(Project project);
-
-    List<Project> getMenuList(Integer id);
-
-    List<Project> getMenuList();
 }

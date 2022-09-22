@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class JwtUtils {
 
-    public static final long EXPIRE = 1000L * 60 * 60 * 24 * 30;//过期时间 30天
+    public static final long EXPIRE = 1000L * 60 * 60 * 24;//过期时间 1天
     public static final String APP_SECRET = "sjdi5e6af448e4asd";
 
 
@@ -20,14 +20,14 @@ public class JwtUtils {
      * @param id
      * @return
      */
-    public static String getJwtToken(Integer id){
+    public static String getJwtToken(String uid){
         String JwtToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setHeaderParam("alg", "HS256")
                 .setSubject("guli-user")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE))
-                .claim("id", id)
+                .claim("uid", uid)
                 .signWith(SignatureAlgorithm.HS256, APP_SECRET)
                 .compact();
         return JwtToken;

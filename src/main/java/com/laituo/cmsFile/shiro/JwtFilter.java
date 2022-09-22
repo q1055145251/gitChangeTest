@@ -40,13 +40,13 @@ public class JwtFilter extends AuthenticatingFilter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
-
+        HttpServletResponse response = (HttpServletResponse)servletResponse;
         if(!StringUtils.hasText(jwt)) {
-            return true;
+            R.populateResponse(ResultCode.UN_LOGIN,"身份已过期，请重新登录",response);
+            return false;
         } else {
             // 校验jwt
             if(!JwtUtils.checkToken(jwt)) {
-                HttpServletResponse response = (HttpServletResponse)servletResponse;
                 R.populateResponse(ResultCode.UN_LOGIN,"身份已过期，请重新登录",response);
                 return false;
             }
