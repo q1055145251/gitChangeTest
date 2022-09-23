@@ -1,7 +1,10 @@
 package com.laituo.cmsFile.service.Impl;
 import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laituo.cmsFile.Vo.MenuVo;
 import com.laituo.cmsFile.Vo.RegisterUserParam;
+import com.laituo.cmsFile.Vo.UserPageVo;
 import com.laituo.cmsFile.common.R;
 import com.laituo.cmsFile.common.ResultCode;
 import com.laituo.cmsFile.mapper.UserMapper;
@@ -66,20 +69,23 @@ public class UserServiceImpl implements UserService {
             return R.fail(ResultCode.FID,"非法访问");
         }
         Subject currentUser = SecurityUtils.getSubject();
+        Object roleNames = currentUser.getSession().getAttribute("roleNames");
         List<MenuVo> menuList;
         if (currentUser.hasRole("管理员")){
             menuList = permissionService.getMenuList("管理员");
         }else {
             menuList = permissionService.getMenuList(uid);
         }
-        return R.success(menuList);
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("role",roleNames);
+        map.put("menu",menuList);
+        return R.success(map);
     }
 
     @Override
     @Transactional
     public R register(RegisterUserParam registerUserParam) {
         User user = JSON.parseObject(JSON.toJSONString(registerUserParam), User.class);
-
         if(userMapper.insert(user)>0){
             if(userRoleService.addUserRole(user.getId(),1)>0){//给用户添加普通角色
                 return R.ok("注册成功");
@@ -87,6 +93,18 @@ public class UserServiceImpl implements UserService {
         }
         log.debug("未知的注册失败原因,注册信息{}",user);
         return R.fail(ResultCode.Error,"注册失败，未知原因");
+    }
+
+    @Override
+    public R getUserList(Page<UserPageVo> page) {
+        //分页，默认查询所有的记录
+        Page<UserPageVo> userPageVo = userMapper.selectPageVo(page);
+        return R.success(userPageVo);
+    }
+
+    @Override
+    public R getUserPermissionById(String Id) {
+        return R.success(permissionService.getUserPermissionById(Id));
     }
 
 

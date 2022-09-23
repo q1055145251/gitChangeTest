@@ -10,8 +10,6 @@ import com.laituo.cmsFile.mapper.PermissionMapper;
 import com.laituo.cmsFile.pojo.Permission;
 import com.laituo.cmsFile.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +73,20 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
+    public List<MenuVo> getUserPermissionById(String id) {
+        List<Permission> permissions=permissionMapper.getUserPermissionById(id);
+        return permissionCopy(permissions);
+    }
+
+    @Override
+    public R getMenuTop() {
+
+        List<Permission> permissions = permissionMapper.selectList(new QueryWrapper<Permission>().eq("father_id", 0));
+        List<MenuVo> menuVos = JSON.parseArray(JSON.toJSONString(permissions), MenuVo.class);
+        return R.success(menuVos);
+    }
+
+    @Override
     @Transactional
     public R delPro(String id) {
         Permission permission = permissionMapper.selectById(id);
@@ -124,19 +136,6 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    @Transactional
-    public R getPermissionList(String uid) {
-        List<Permission> permissions;
-        Subject currentUser = SecurityUtils.getSubject();
-        if (currentUser.hasRole("管理员")){
-            permissions=permissionMapper.getPermissionListAdmin();
-        }else {
-            permissions=permissionMapper.getPermissionList(uid);
-        }
-        return R.success(permissionCopy(permissions));
-    }
-
-    @Override
     public R putPro(PermissionParam param) {
         Permission permission = permissionMapper.selectById(param.getId());
 
@@ -163,9 +162,6 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
-
-
-
     public List<MenuVo> permissionCopy(List<Permission> permissions){
         List<MenuVo> menuVos=new ArrayList<>();
         Map<Integer,MenuVo> map=new HashMap<>();
@@ -176,13 +172,14 @@ public class PermissionServiceImpl implements PermissionService {
                 menuVos.add(menuVo);
             }else {
                 MenuVo menuVo = map.get(permission.getFatherId());
-                List<MenuVo> child = menuVo.getChild();
-                if (child==null){
-                    child=new ArrayList<>();
+                if (menuVo==null){//找不到父级权限，直接不添加
+                    continue;
+                }
+                if (menuVo.getChild()==null){
+                    menuVo.setChild(new ArrayList<>());
                 }
                 MenuVo menuVo1 = JSON.parseObject(JSON.toJSONString(permission), MenuVo.class);
-                child.add(menuVo1);
-                menuVo.setChild(child);
+                menuVo.getChild().add(menuVo1);
                 map.put(menuVo1.getId(),menuVo1);
             }
         }

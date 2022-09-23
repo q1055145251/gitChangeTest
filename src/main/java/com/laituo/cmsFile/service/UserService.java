@@ -1,7 +1,10 @@
 package com.laituo.cmsFile.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.laituo.cmsFile.Vo.RegisterUserParam;
+import com.laituo.cmsFile.Vo.UserPageVo;
 import com.laituo.cmsFile.common.R;
 import com.laituo.cmsFile.pojo.User;
 
@@ -27,4 +30,17 @@ public interface UserService {
      * @return
      */
     R register(RegisterUserParam registerUserParam);
+
+    /**
+     * 获取用户列表 52-1
+     * @return
+     */
+    R getUserList(Page<UserPageVo> page);
+
+    /**
+     * 通过用户id获取用户的权限列表  52-2
+     * @param id    用户id
+     * @return
+     */
+    R getUserPermissionById(String id);
 }

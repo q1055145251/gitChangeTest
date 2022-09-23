@@ -38,8 +38,6 @@ public class ShrioConfig {
 
 
 
-
-
     //创建shiro安全管理器
     @Bean
     public DefaultWebSecurityManager getDefaultSecurityManager() {
@@ -50,29 +48,29 @@ public class ShrioConfig {
         return securityManager;
     }
 
-    @Bean
-    public ShiroFilterFactoryBean getShiroFilterFactoryBean(DefaultWebSecurityManager securityManager, JwtFilter jwtFilter) {
+    @Bean("shiroFilter")
+    public ShiroFilterFactoryBean getShiroFilterFactoryBean(DefaultWebSecurityManager securityManager) {
         ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
         filterFactoryBean.setSecurityManager(securityManager);
-        Map<String, Filter> map = new HashMap<>();
-        map.put("jwt", jwtFilter);
-        filterFactoryBean.setFilters(map);
-        Map<String, String> filterMap = new LinkedHashMap<>();
-
+        Map<String, Filter> tokenFilterMap = new HashMap<>();
+        tokenFilterMap.put("jwt", new JwtFilter());
+        filterFactoryBean.setFilters(tokenFilterMap);
         //anon jwt自定义过滤器无需登录
-
+        Map<String,String> filterMap = new LinkedHashMap<>();
 //        filterMap.put("/test/**", "jwt");//需要token
 //        filterMap.put("/user/**","jwt");
-        filterMap.put("/user/**","jwt");
-        filterMap.put("/role/**","jwt");
+
+        filterMap.put("/login","anon");
+        filterMap.put("/logout","anon");
+        filterMap.put("/register","anon");
+        filterMap.put("/index.html","anon");
+        filterMap.put("/upload/**","anon");
+        filterMap.put("/**","jwt");
+
         filterFactoryBean.setFilterChainDefinitionMap(filterMap);
         return filterFactoryBean;
     }
 
-    @Bean
-    public JwtFilter getJwtFilter() {
-        return new JwtFilter();
-    }
 
     // 开启注解代理
     @Bean

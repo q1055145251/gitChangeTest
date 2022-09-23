@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/permission")
 public class PermissionController {
 
     @Autowired
     private PermissionService permissionService;
-
 
     @PostMapping("pro")
     @RequiresRoles("管理员")
@@ -46,8 +45,6 @@ public class PermissionController {
         return permissionService.putPro(param);
     }
 
-
-
     @PostMapping("permWrite")
     @RequiresRoles("管理员")
     public R addPerm(@RequestBody @NotNull String id){
@@ -56,16 +53,13 @@ public class PermissionController {
         return permissionService.addPerm(id);
     }
 
-    @GetMapping("permissionList")
-    @RequiresRoles(value = {"管理员","用户"},logical = Logical.OR)
-    public R getPermission(){
-        Map principal = (Map) SecurityUtils.getSubject().getPrincipal();
-        String uid = (String) principal.get("uid");
-        if (uid==null){
-            return R.fail(ResultCode.UN_LOGIN,"登录超时或未登录");
-        }
-        return permissionService.getPermissionList(uid);
+    @GetMapping("/menuTop")
+    @RequiresRoles("管理员")
+    public R getMenuTop(){
+        return permissionService.getMenuTop();
     }
+
+
 
 
 }

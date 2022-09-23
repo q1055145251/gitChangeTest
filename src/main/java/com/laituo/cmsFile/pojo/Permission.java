@@ -16,7 +16,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)//不返回空字段
 @TableName("permission")
 @Accessors(chain = true)  //链式写法
-@JsonIgnoreProperties(value = {"createdDate", "updateDate","updateTimestamp","createdTimestamp","flag","schoolUserId","phone","openid"})
+@JsonIgnoreProperties(value = {"createdDate", "updateDate","updateTimestamp","createdTimestamp","flag"})
 public class Permission {
 
     @TableId(value = "id",type= IdType.AUTO)

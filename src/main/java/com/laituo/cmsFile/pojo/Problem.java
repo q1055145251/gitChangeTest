@@ -1,33 +1,32 @@
 package com.laituo.cmsFile.pojo;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)//不返回空字段
-@TableName("user")
+@TableName("problem")
 @JsonIgnoreProperties(value = {"createdDate", "updateDate","updateTimestamp","createdTimestamp","flag"})
-public class User {
+public class Problem {
 
-    @TableId(value = "id",type= IdType.AUTO)
-    private Integer id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
-    @NotNull
-    private String uid;
+    private String title;
 
-    private String name;
+    private List<Long> srcId;
 
-    @NotNull
-    private String password;
+    private Integer permission_id;
 
-    private String phone;
+    private Integer userId;
 
-    private String info;
+    private Integer type;
 
     private Integer flag;
 
@@ -42,6 +41,14 @@ public class User {
 
     @TableField(fill= FieldFill.INSERT_UPDATE)
     private Integer updateTimestamp;
+
+
+
+    public void setSrcId(String srcId) {
+        this.srcId = JSON.parseArray(srcId,Long.class);;
+    }
+
+
 
 
 }
