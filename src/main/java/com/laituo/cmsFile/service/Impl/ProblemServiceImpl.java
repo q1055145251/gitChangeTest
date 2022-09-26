@@ -59,6 +59,7 @@ public class ProblemServiceImpl implements ProblemService {
         }else {
             Page<Problem> problemPage = problemMapper.selectPage(page, new QueryWrapper<Problem>().eq("permission_id",permissionId));
             //循环变成连接
+            fileSrcService.getList(problemPage.getRecords());
 
 
             return R.success(problemPage);

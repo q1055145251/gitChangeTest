@@ -13,4 +13,6 @@ public interface FileSrcService {
     R getFileListAll(Page<FileSrc> objectPage);
 
     Map updateFiles(MultipartFile[] files);
+
+    void getList(List<Problem> records);
 }

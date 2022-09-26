@@ -1,5 +1,6 @@
 package com.laituo.cmsFile.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laituo.cmsFile.common.R;
 import com.laituo.cmsFile.mapper.FileSrcMapper;
@@ -61,5 +62,13 @@ public class FileSrcServiceImpl implements FileSrcService {
         data.put("updateError",updateError);
         data.put("updateOk",updateOk);
         return data;
+    }
+
+    @Override
+    public void getList(List<Problem> records) {
+        for (Problem record : records) {
+            List<Long> srcIdList = record.getSrcIdList();
+            fileSrcMapper.selectList(new QueryWrapper<>().in());
+        }
     }
 }
