@@ -15,6 +15,6 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 
 
-    @Select("SELECT user.id,uid,user.name,phone,info,role.name as role FROM `user` INNER JOIN user_role INNER JOIN role WHERE user_id=user.id AND role_id=role.id")
+    @Select("SELECT user.id,uid,user.name,phone,info,role.name as role FROM `user` INNER JOIN user_role INNER JOIN role WHERE user_id=user.id AND role_id=role.id AND role.id=1 AND flag=0")
     Page<UserPageVo> selectPageVo(Page<?> page);
 }

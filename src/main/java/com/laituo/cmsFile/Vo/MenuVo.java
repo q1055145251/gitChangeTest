@@ -1,15 +1,9 @@
 package com.laituo.cmsFile.Vo;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.validator.constraints.Range;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -26,6 +20,14 @@ public class MenuVo {
     private String path="/";
 
     private Integer isMenu;
+
+    private Integer pid;
+
+    private boolean write;
+
+    public void setFatherId(Integer fatherId) {
+        this.pid = fatherId;
+    }
 
     public void setPermissionName(String permissionName) {
         this.name = permissionName;

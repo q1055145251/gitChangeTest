@@ -4,18 +4,21 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laituo.cmsFile.common.R;
 import com.laituo.cmsFile.mapper.FileSrcMapper;
 import com.laituo.cmsFile.pojo.FileSrc;
+import com.laituo.cmsFile.pojo.Problem;
 import com.laituo.cmsFile.service.FileSrcService;
 import com.laituo.cmsFile.utils.UploadFileUtil;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -27,18 +30,36 @@ public class FileSrcServiceImpl implements FileSrcService {
 
     @Override
     public R getFileListAll(Page<FileSrc> page) {
-        return R.success(fileSrcMapper.selectPage(page,null));
+        return R.success(fileSrcMapper.selectPage(page, null));
     }
 
     @Override
-    public R updateFiles(MultipartFile[] files) {
-
+    @Transactional
+    public Map updateFiles(MultipartFile[] files) {
         Map principal = (Map) SecurityUtils.getSubject().getPrincipal();
         String uid = (String) principal.get("uid");
-        List filesUrl=new ArrayList<String>();
+        List updateError = new ArrayList<String>();
+        List updateOk = new ArrayList<Long>();
         for (MultipartFile file : files) {
-            filesUrl.add(UploadFileUtil.uploadFile(file,uid));
+            Map map = new HashMap();
+            String fileName = UploadFileUtil.uploadFile(file, uid);
+            if (!fileName.equals("false")){//如果上传成功
+                FileSrc fileSrc = new FileSrc();
+                fileSrc.setPath("/upload/"+uid+"/"+fileName);
+                fileSrc.setName(file.getOriginalFilename());
+                fileSrc.setUserUid(uid);
+                if(fileSrcMapper.insert(fileSrc)>0){
+                    updateOk.add(fileSrc.getId());
+                    continue;
+                }
+            }
+            map.put("file", file.getOriginalFilename());
+            map.put("state", "上传失败");
+            updateError.add(map);
         }
-        return R.success(filesUrl);
+        Map data = new HashMap();
+        data.put("updateError",updateError);
+        data.put("updateOk",updateOk);
+        return data;
     }
 }

@@ -12,8 +12,10 @@ public interface UserPermissionMapper extends BaseMapper<UserPermission> {
 
     Integer insertBatchSomeColumn(List entityList);
 
-    @Select("<script> SELECT permission.id as permission_id,user.id as user_id FROM `permission` INNER JOIN `user` WHERE " +
-            "user.flag=0 and permission.flag=0 and user.id=#{id} and permission.id in" +
-            " <foreach collection='permissions' item='item' open='(' separator=',' close=')'> #{item} </foreach></script>")
-    List<UserPermission> checkUserPerm(String id,List<String> permissions);
+//    @Select("<script> SELECT permission.id as permission_id,user.id as user_id FROM `permission` INNER JOIN `user` WHERE " +
+//            "user.flag=0 and permission.flag=0 and user.id=#{id} and permission.id in" +
+//            " <foreach collection='permissions' item='item' open='(' separator=',' close=')'> #{item} </foreach></script>")
+@Select("SELECT permission.id as permission_id,user.id as user_id FROM `permission` INNER JOIN `user` WHERE " +
+        "user.flag=0 and permission.flag=0 and user.id=#{id} and permission.id=#{permission}")
+    UserPermission checkUserPerm(String id,Integer permission);
 }

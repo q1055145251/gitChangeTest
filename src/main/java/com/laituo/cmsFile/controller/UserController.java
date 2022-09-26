@@ -1,6 +1,7 @@
 package com.laituo.cmsFile.controller;
 
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laituo.cmsFile.Vo.RegisterUserParam;
 import com.laituo.cmsFile.Vo.UserPageVo;
@@ -60,14 +61,32 @@ public class UserController {
 
     @PostMapping("UserPermission/{id}")
     @RequiresRoles("管理员")
-    public R addUserPermission(@RequestBody @NotNull List<String> permissions, @PathVariable @NotNull String id){
-        return  userPermissionService.addUserPermission(id,permissions);
+    public R addUserPermission(@RequestBody @NotNull String param, @PathVariable @NotNull String id){
+        Map parse = (Map) JSON.parse(param);
+        Integer permissionId= (Integer) parse.get("permissionId");
+        return  userPermissionService.addUserPermission(id,permissionId);
     }
 
     @DeleteMapping("UserPermission/{id}")
     @RequiresRoles("管理员")
-    public R delUserPermission(@RequestBody @NotNull List<String> permissions, @PathVariable @NotNull String id){
-        return  userPermissionService.delUserPermission(id,permissions);
+    public R delUserPermission(@RequestBody @NotNull String param, @PathVariable @NotNull String id){
+        Map parse = (Map) JSON.parse(param);
+        Integer permissionId= (Integer) parse.get("permissionId");
+        return  userPermissionService.delUserPermission(id,permissionId);
+    }
+    @PutMapping("UserPermission/{id}")
+    @RequiresRoles("管理员")
+    public R putUserPermission(@RequestBody @NotNull String param, @PathVariable @NotNull String id){
+        Map parse = (Map) JSON.parse(param);
+        Integer permissionId= (Integer) parse.get("permissionId");
+        boolean write = parse.get("write")==null ? false: (boolean) parse.get("write");
+        return userPermissionService.putUserPermission(permissionId,id,write);
+    }
+
+    @DeleteMapping("del/{id}")
+    @RequiresRoles("管理员")
+    public R delUser(@PathVariable String id){
+        return userService.delUser(id);
     }
 
 

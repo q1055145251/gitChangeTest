@@ -57,6 +57,7 @@ public class MyRealm extends AuthorizingRealm {
         info.setRoles(roleNames);
         info.setStringPermissions(permission);
         SecurityUtils.getSubject().getSession().setAttribute("roleNames", roleNames);
+
         return info;
     }
 

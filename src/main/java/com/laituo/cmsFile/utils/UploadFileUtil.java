@@ -12,6 +12,8 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -51,19 +53,22 @@ public class UploadFileUtil {
     public static String uploadFile(MultipartFile multipartFile, String dir) {
         try {
             if (multipartFile.isEmpty()) {
-                return "请选择文件";
+                return "false";
             }
             // 获取文件的名称
-            String originalFilename = multipartFile.getOriginalFilename();
+            String fileName = multipartFile.getOriginalFilename();
             // 文件后缀 例如：.png
-            String fileSuffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
             // uuid 生成文件名
-//            String uuid = String.valueOf(UUID.randomUUID());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd`HH`mm`ss==");
+            String format = simpleDateFormat.format(new Date());
+            fileName=format+fileName;//给文件名添加时间
             // 根路径，在 resources/static/upload
-            String basePath = ResourceUtils.getURL("classpath:").getPath() + "static/upload/" + (StringUtils.isNotBlank(dir) ? (dir + "/") : "");
+            if (StringUtils.isEmpty(dir)){
+                return "获取用户名失败";
+            }
+            String basePath = ResourceUtils.getURL("classpath:").getPath() + "static/upload/" + dir + "/";
             basePath = URLDecoder.decode(basePath, "UTF-8");
-            // 新的文件名，使用uuid生成文件名
-            String fileName = originalFilename;
             // 创建新的文件
             File fileExist = new File(basePath);
             // 文件夹不存在，则新建
@@ -75,11 +80,55 @@ public class UploadFileUtil {
             // 完成文件的上传
             multipartFile.transferTo(file);
             // 返回绝对路径
-            return "上传成功,http://" + InetAddress.getLocalHost().getHostAddress() + ":" + port + "/static/upload/" + (StringUtils.isNotBlank(dir) ? (dir + "/") : "") + fileName;
+            return fileName;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "上传失败";
+        return "false";
     }
+
+    /**
+     * 将临时目录的文件移动到正确目录
+     * @param fileName 文件名
+     * @param dir 用户名
+     * @return
+     */
+    public static boolean copyFile(String fileName,String dir,String newFileName){
+
+        try {
+            if (StringUtils.isEmpty(fileName)) {
+                return false;
+            }
+            if (StringUtils.isEmpty(dir)){
+                return false;
+            }
+            String basePath = ResourceUtils.getURL("classpath:").getPath() + "static/upload/temp/" + dir + "/";
+            basePath = URLDecoder.decode(basePath, "UTF-8");
+            // 寻找临时文件
+            File oldName = new File(basePath+fileName);
+            // 文件不存在，失败
+            if (!oldName.exists()) {
+                return false;
+            }
+            if (oldName.isDirectory()) {
+                return false;
+            }
+            String newBasePath = ResourceUtils.getURL("classpath:").getPath() + "static/upload/" + dir + "/";
+            File newName = new File(newBasePath+newFileName);
+            String pFile = newName.getParent();
+            File pDir = new File(pFile);
+            if (!pDir.exists()) {//父目录不存在，创建
+                pDir.mkdirs();
+            }
+            return oldName.renameTo(newName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+
 }
 

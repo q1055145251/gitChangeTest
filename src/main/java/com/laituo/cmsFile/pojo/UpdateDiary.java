@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class UpdateDiary {
     private String name;
 
     private Float versions;
-    private List<Long> srcId;
+    private List<Long> srcId=new ArrayList<>();
 
     private List<Long> problemId;
 
     private Integer permission_id;
 
-    private Integer userId;
+    private String userUid;
 
     private Integer type;
 

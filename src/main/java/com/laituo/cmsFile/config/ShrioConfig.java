@@ -60,12 +60,11 @@ public class ShrioConfig {
 //        filterMap.put("/test/**", "jwt");//需要token
 //        filterMap.put("/user/**","jwt");
 
-        filterMap.put("/login","anon");
-        filterMap.put("/logout","anon");
-        filterMap.put("/register","anon");
-        filterMap.put("/index.html","anon");
-        filterMap.put("/upload/**","anon");
-        filterMap.put("/**","jwt");
+        filterMap.put("/api/login","anon");
+        filterMap.put("/api/logout","anon");
+        filterMap.put("/api/register","anon");
+        filterMap.put("/api/upload/**","anon");
+        filterMap.put("/api/**","jwt");
 
         filterFactoryBean.setFilterChainDefinitionMap(filterMap);
         return filterFactoryBean;

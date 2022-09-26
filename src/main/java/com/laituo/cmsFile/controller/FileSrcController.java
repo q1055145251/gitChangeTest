@@ -31,13 +31,13 @@ public class FileSrcController {
 
 
 
-    @PostMapping("updateFiles")
-    @RequiresRoles(value = {"管理员","用户"},logical = Logical.OR)
-    public R updateFiles(@RequestParam("files") MultipartFile[] files){
-
-        return fileSrcService.updateFiles(files);
-
-    }
+//    @PostMapping("updateFiles")
+//    @RequiresRoles(value = {"管理员","用户"},logical = Logical.OR)
+//    public R updateFiles(@RequestParam("files") MultipartFile[] files){
+//
+//        return fileSrcService.updateFiles(files);
+//
+//    }
 
 
 

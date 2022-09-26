@@ -107,5 +107,14 @@ public class UserServiceImpl implements UserService {
         return R.success(permissionService.getUserPermissionById(Id));
     }
 
+    @Override
+    public R delUser(String id) {
+        if(userMapper.deleteById(id)>0){
+            return R.ok("删除成功");
+        }else {
+            return R.fail(ResultCode.Error,"删除失败。未知原因");
+        }
+    }
+
 
 }

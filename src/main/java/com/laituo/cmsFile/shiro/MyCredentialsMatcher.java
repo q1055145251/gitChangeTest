@@ -7,9 +7,13 @@ import com.laituo.cmsFile.mapper.UserMapper;
 import com.laituo.cmsFile.pojo.User;
 import com.laituo.cmsFile.service.UserService;
 import com.laituo.cmsFile.utils.JwtUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,11 +39,7 @@ public class MyCredentialsMatcher extends SimpleCredentialsMatcher {
             return false;
         }
         jwtToken.setUser(backUser);
+
         return true;
-//        //获得用户输入的密码:(可以采用加盐(salt)的方式去检验)
-//
-//        //获得数据库中的密码
-//        String uid = String.valueOf(info.getPrincipals());
-//
     }
 }

@@ -1,6 +1,7 @@
 package com.laituo.cmsFile.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.laituo.cmsFile.Vo.MenuVo;
 import com.laituo.cmsFile.pojo.Permission;
 import com.laituo.cmsFile.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
@@ -26,13 +27,13 @@ public interface PermissionMapper extends BaseMapper<Permission> {
     Set<String> getRoleSet(String uid);
 
     @Select("SELECT id,permission_code,permission_name,father_id,path,is_menu FROM `permission` WHERE permission.flag=0 ORDER BY is_menu DESC,father_id ASC")
-    List<Permission> getMenuListAdmin();
+    List<MenuVo> getMenuListAdmin();
 
     @Select("SELECT permission.id,permission_name,path,father_id,is_menu FROM `user` INNER JOIN user_permission INNER JOIN permission WHERE uid=#{uid}" +
             "             AND user.id=user_id AND permission_id=permission.id AND permission.flag=0 ORDER BY is_menu DESC,father_id ASC")
-    List<Permission> getMenuList(String uid);
+    List<MenuVo> getMenuList(String uid);
 
     @Select("SELECT permission.id,permission_name,path,father_id,is_menu FROM `user` INNER JOIN user_permission INNER JOIN permission WHERE user.id=#{id}" +
-            "             AND user.id=user_id AND permission_id=permission.id AND permission.flag=0")
-    List<Permission> getUserPermissionById(String id);
+            "             AND user.id=user_id AND permission_id=permission.id AND permission.flag=0 ORDER BY is_menu DESC")
+    List<MenuVo> getUserPermissionById(String id);
 }

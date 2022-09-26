@@ -1,5 +1,6 @@
 package com.laituo.cmsFile.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.laituo.cmsFile.Vo.MenuVo;
 import com.laituo.cmsFile.Vo.PermissionParam;
 import com.laituo.cmsFile.common.R;
@@ -8,7 +9,7 @@ import com.laituo.cmsFile.pojo.Permission;
 import java.util.List;
 import java.util.Set;
 
-public interface PermissionService {
+public interface PermissionService extends IService<Permission> {
 
     /**
      * 获取权限
@@ -19,7 +20,7 @@ public interface PermissionService {
 
     /**
      * 添加模块 51-1
-     * @param permission    权限标识----permissionCode  菜单名字----permissionName 父目录----fatherId 路径----path 是否为菜单----isMenu
+     * @param permission    权限标识----permissionCode  菜单名字----permissionName 父目录----fatherId 路径----path
      * @return
      */
     R addPro(Permission permission);
@@ -65,4 +66,11 @@ public interface PermissionService {
      * @return
      */
     R getMenuTop();
+
+    /**
+     * 用父id 找子id
+     * @param permission
+     * @return
+     */
+    Permission getPermissionWriteByPid(Integer permission);
 }

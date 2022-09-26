@@ -29,14 +29,13 @@ public class Permission {
 
     private Integer fatherId=0;
 
-
-
     @NotNull
     private String path="/";
-    @Range(min=0,max=1,message = "请输入正确的isMenu")
+    @Range(min=1,max=1,message = "请输入正确的isMenu")
     private Integer isMenu=1;
 
-    @TableLogic(value = "0",delval = "NULL")
+    @TableLogic
+    @TableField("flag")
     private Integer flag;
 
     @TableField(fill= FieldFill.INSERT)
@@ -55,10 +54,12 @@ public class Permission {
 
     public void setPath(@NotNull String path) {
         if (path.isEmpty()){
-            this.path = "/";
+            path = "/";
         }
         if (path.charAt(0)!='/'){//如果第一个不是/
             this.path="/"+path;
+        }else {
+            this.path=path;
         }
     }
 

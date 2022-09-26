@@ -19,6 +19,7 @@ public class MybatisPlusConfig {
 
     PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
     paginationInnerInterceptor.setMaxLimit(500L);
+    paginationInnerInterceptor.setOverflow(true);
     interceptor.addInnerInterceptor(paginationInnerInterceptor);//分页插件
 
     return interceptor;

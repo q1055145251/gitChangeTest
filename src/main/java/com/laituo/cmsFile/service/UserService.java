@@ -43,4 +43,11 @@ public interface UserService {
      * @return
      */
     R getUserPermissionById(String id);
+
+    /**
+     * 删除用户  52-6
+     * @param id    用户id
+     * @return
+     */
+    R delUser(String id);
 }

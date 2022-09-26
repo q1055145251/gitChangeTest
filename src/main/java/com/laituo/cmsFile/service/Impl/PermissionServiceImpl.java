@@ -2,6 +2,7 @@ package com.laituo.cmsFile.service.Impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.laituo.cmsFile.Vo.MenuVo;
 import com.laituo.cmsFile.Vo.PermissionParam;
 import com.laituo.cmsFile.common.R;
@@ -19,7 +20,7 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class PermissionServiceImpl implements PermissionService {
+public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,Permission> implements PermissionService {
 
     @Autowired
     private PermissionMapper permissionMapper;
@@ -34,7 +35,6 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Transactional
     public R addPro(Permission permission) {
-
         if (permission.getFatherId()!=0){
             Permission father_id = permissionMapper.selectById(permission.getFatherId());
             if (father_id==null){//如果指定的父id
@@ -44,13 +44,21 @@ public class PermissionServiceImpl implements PermissionService {
                 return R.fail(ResultCode.BAD,"父目录不是一个目录");
             }
         }
-
+        permission.setFlag(0);
         try {
             if(permissionMapper.insert(permission)>0){
-                return R.ok("成功");
-            }else {
-                return R.fail(ResultCode.Error,"失败");
+                permission.setFatherId(permission.getId());
+                permission.setId(null);
+                permission.setPath(permission.getPath()+"/write");
+                permission.setPermissionCode(permission.getPermissionCode()+":write");
+                permission.setPermissionName(permission.getPermissionName()+":解决问题权限");
+                permission.setIsMenu(0);
+                permission.setFlag(0);
+                if (permissionMapper.insert(permission)>0){
+                    return R.ok("成功");
+                }
             }
+            return R.fail(ResultCode.Error,"失败");
         }catch (Exception e){
             Throwable cause = e.getCause();
             if (cause instanceof SQLIntegrityConstraintViolationException) {
@@ -63,27 +71,45 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<MenuVo> getMenuList(String uid) {
-        List<Permission> permissions;
+        List<MenuVo> menuVos;
         if (uid.equals("管理员")){
-            permissions=permissionMapper.getMenuListAdmin();
+            menuVos=permissionMapper.getMenuListAdmin();
         }else {
-            permissions=permissionMapper.getMenuList(uid);
+            menuVos=permissionMapper.getMenuList(uid);
         }
-        return permissionCopy(permissions);
+        return menuVos;
     }
 
     @Override
     public List<MenuVo> getUserPermissionById(String id) {
-        List<Permission> permissions=permissionMapper.getUserPermissionById(id);
-        return permissionCopy(permissions);
+        List<MenuVo> menuVos=permissionMapper.getUserPermissionById(id);
+        Map map=new HashMap();
+        for (int i = 0; i < menuVos.size(); i++) {
+            if (menuVos.get(i).getIsMenu()==0){//读写权限
+                MenuVo o = (MenuVo) map.get(menuVos.get(i).getPid());//找到读写权限父级
+                if (o==null){//如果找不到父级，说明权限有误，将数据库该权限删除
+                    permissionMapper.deleteById(menuVos.get(i).getId());
+                    continue;
+                }
+                o.setWrite(true);//赋予读写权限
+                menuVos.remove(i);//去掉读写权限显示
+            }else {
+                map.put(menuVos.get(i).getId(),menuVos.get(i));
+            }
+        }
+        return menuVos;
     }
 
     @Override
     public R getMenuTop() {
-
         List<Permission> permissions = permissionMapper.selectList(new QueryWrapper<Permission>().eq("father_id", 0));
         List<MenuVo> menuVos = JSON.parseArray(JSON.toJSONString(permissions), MenuVo.class);
         return R.success(menuVos);
+    }
+
+    @Override
+    public Permission getPermissionWriteByPid(Integer permission_id) {//获取项目的写权限标识
+        return permissionMapper.selectOne(new QueryWrapper<Permission>().eq("father_id",permission_id).last("limit 1"));
     }
 
     @Override
@@ -91,7 +117,7 @@ public class PermissionServiceImpl implements PermissionService {
     public R delPro(String id) {
         Permission permission = permissionMapper.selectById(id);
 
-        if (Objects.isNull(permission)){
+        if (Objects.isNull(permission)||permission.getIsMenu()==0){
             return R.fail(ResultCode.BAD,"id有误");
         }
         if (permission.getFatherId()==0){//顶级目录
@@ -100,7 +126,9 @@ public class PermissionServiceImpl implements PermissionService {
                 return R.fail(ResultCode.BAD,"请先删除目录下的模块");
             }
         }
-        if(permissionMapper.deleteById(id)>0){
+        if(permissionMapper.delete(new QueryWrapper<Permission>()
+                .eq("id",permission.getId())
+                .eq("father_id",permission.getId()))>0){
             return R.ok("删除成功");
         }else {
             log.debug("删除模块失败！id{}",id);
@@ -162,28 +190,28 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
-    public List<MenuVo> permissionCopy(List<Permission> permissions){
-        List<MenuVo> menuVos=new ArrayList<>();
-        Map<Integer,MenuVo> map=new HashMap<>();
-        for (Permission permission : permissions) {
-            if (permission.getFatherId()==0){
-                MenuVo menuVo = JSON.parseObject(JSON.toJSONString(permission), MenuVo.class);
-                map.put(menuVo.getId(),menuVo);
-                menuVos.add(menuVo);
-            }else {
-                MenuVo menuVo = map.get(permission.getFatherId());
-                if (menuVo==null){//找不到父级权限，直接不添加
-                    continue;
-                }
-                if (menuVo.getChild()==null){
-                    menuVo.setChild(new ArrayList<>());
-                }
-                MenuVo menuVo1 = JSON.parseObject(JSON.toJSONString(permission), MenuVo.class);
-                menuVo.getChild().add(menuVo1);
-                map.put(menuVo1.getId(),menuVo1);
-            }
-        }
-        return menuVos;
-    }
+//    public List<MenuVo> permissionCopy(List<Permission> permissions){
+//        List<MenuVo> menuVos=new ArrayList<>();
+//        Map<Integer,MenuVo> map=new HashMap<>();
+//        for (Permission permission : permissions) {
+//            if (permission.getFatherId()==0){
+//                MenuVo menuVo = JSON.parseObject(JSON.toJSONString(permission), MenuVo.class);
+//                map.put(menuVo.getId(),menuVo);
+//                menuVos.add(menuVo);
+//            }else {
+//                MenuVo menuVo = map.get(permission.getFatherId());
+//                if (menuVo==null){//找不到父级权限，直接不添加
+//                    continue;
+//                }
+//                if (menuVo.getChild()==null){
+//                    menuVo.setChild(new ArrayList<>());
+//                }
+//                MenuVo menuVo1 = JSON.parseObject(JSON.toJSONString(permission), MenuVo.class);
+//                menuVo.getChild().add(menuVo1);
+//                map.put(menuVo1.getId(),menuVo1);
+//            }
+//        }
+//        return menuVos;
+//    }
 
 }
