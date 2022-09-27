@@ -22,5 +22,7 @@ public class ProblemParam {
     @NotNull
     private String text;
 
+    private List<Long> srcId;
+
 
 }

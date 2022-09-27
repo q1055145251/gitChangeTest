@@ -14,6 +14,8 @@ public interface FileSrcService {
 
     Map updateFiles(MultipartFile[] files);
 
+    R updateFile(MultipartFile file);
+
 
     List<FileSrc> getList(List<Long> srcIdList);
 }

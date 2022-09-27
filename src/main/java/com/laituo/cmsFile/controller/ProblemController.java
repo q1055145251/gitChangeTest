@@ -34,14 +34,8 @@ public class ProblemController {
     }
 
     @PostMapping("add")
-    public R addProblem(@NotNull String title,@NotNull Integer permissionId, Integer type,
-                        @NotNull String text, MultipartFile [] files){
-        ProblemParam param = new ProblemParam();
-        param.setTitle(title);
-        param.setType(type==null?0:type);
-        param.setPermissionId(permissionId);
-        param.setText(text);
-        return problemService.addProblem(param,files);
+    public R addProblem(@RequestBody @Validated ProblemParam param){
+        return problemService.addProblem(param);
     }
 
     @DeleteMapping("del/{id}")

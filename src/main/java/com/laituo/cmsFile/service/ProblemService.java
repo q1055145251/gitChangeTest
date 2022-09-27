@@ -18,11 +18,10 @@ public interface ProblemService {
 
     /**
      * 提出问题 53-1
-     * @param param     title--标题  text--内容  type--类型  permissionId--模块id
-     * @param files     文件列表
+     * @param param     title--标题  text--内容  type--类型  permissionId--模块id srcId--文件id数组
      * @return
      */
-    R addProblem(ProblemParam param, MultipartFile[] files);
+    R addProblem(ProblemParam param);
 
     /**
      * 删除问题 53-3

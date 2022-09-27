@@ -82,7 +82,7 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     @Transactional
-    public R addProblem(ProblemParam param, MultipartFile[] files) {
+    public R addProblem(ProblemParam param) {
         Subject currentUser = SecurityUtils.getSubject();
         Map principal = (Map) currentUser.getPrincipal();
         String uid = (String) principal.get("uid");//拿到用户uid
@@ -92,10 +92,6 @@ public class ProblemServiceImpl implements ProblemService {
             return R.fail(ResultCode.BAD, "模块id有误");
         }
         Problem problem = JSON.parseObject(JSON.toJSONString(param), Problem.class);
-        if (files != null) {//如果文件列表有文件，批量上传
-            Map map = fileSrcService.updateFiles(files);
-            problem.setSrcIdList((List) map.get("updateOk"));
-        }
         problem.setUserUid(uid);
         if (problemMapper.insert(problem) > 0) {
             return R.ok(problem.getId().toString());

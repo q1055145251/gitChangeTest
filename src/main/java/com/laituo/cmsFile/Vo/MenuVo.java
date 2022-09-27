@@ -32,11 +32,4 @@ public class MenuVo {
     public void setPermissionName(String permissionName) {
         this.name = permissionName;
     }
-
-    public void setPermissionCode(String permissionCode) {
-        this.code = permissionCode;
-    }
-
-    private List<MenuVo> child;
-
 }

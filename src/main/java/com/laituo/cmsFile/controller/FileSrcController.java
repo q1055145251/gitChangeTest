@@ -7,7 +7,9 @@ import com.laituo.cmsFile.pojo.FileSrc;
 import com.laituo.cmsFile.service.FileSrcService;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +18,7 @@ import java.io.File;
 
 @RestController
 @RequestMapping("fileSrc")
+@Validated
 public class FileSrcController {
 
     @Autowired
@@ -31,13 +34,13 @@ public class FileSrcController {
 
 
 
-//    @PostMapping("updateFiles")
-//    @RequiresRoles(value = {"管理员","用户"},logical = Logical.OR)
-//    public R updateFiles(@RequestParam("files") MultipartFile[] files){
-//
-//        return fileSrcService.updateFiles(files);
-//
-//    }
+
+
+    @PostMapping("updateFile")
+    @RequiresRoles(value = {"管理员","用户"},logical = Logical.OR)
+    public R updateFile(@RequestParam("file") @NotNull MultipartFile file){
+        return fileSrcService.updateFile(file);
+    }
 
 
 
