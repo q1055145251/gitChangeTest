@@ -8,17 +8,13 @@ import com.laituo.cmsFile.pojo.FileSrc;
 import com.laituo.cmsFile.pojo.Problem;
 import com.laituo.cmsFile.service.FileSrcService;
 import com.laituo.cmsFile.utils.UploadFileUtil;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -65,10 +61,11 @@ public class FileSrcServiceImpl implements FileSrcService {
     }
 
     @Override
-    public void getList(List<Problem> records) {
-        for (Problem record : records) {
-            List<Long> srcIdList = record.getSrcIdList();
-            fileSrcMapper.selectList(new QueryWrapper<>().in());
+    public List<FileSrc> getList(List<Long> srcIdList) {
+        if (srcIdList==null||srcIdList.size()==0){
+            return null;
         }
+        List<FileSrc> files = fileSrcMapper.selectList(new QueryWrapper<FileSrc>().select("id","path").in("id", srcIdList));
+        return files;
     }
 }

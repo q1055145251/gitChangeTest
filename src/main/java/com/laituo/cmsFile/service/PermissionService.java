@@ -73,4 +73,9 @@ public interface PermissionService extends IService<Permission> {
      * @return
      */
     Permission getPermissionWriteByPid(Integer permission);
+    /**
+     * 获取模块列表 51-6
+     * @return
+     */
+    R getPermissionList();
 }

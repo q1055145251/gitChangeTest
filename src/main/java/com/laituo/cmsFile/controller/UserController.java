@@ -64,7 +64,8 @@ public class UserController {
     public R addUserPermission(@RequestBody @NotNull String param, @PathVariable @NotNull String id){
         Map parse = (Map) JSON.parse(param);
         Integer permissionId= (Integer) parse.get("permissionId");
-        return  userPermissionService.addUserPermission(id,permissionId);
+        boolean write = parse.get("write")==null ? false: (boolean) parse.get("write");
+        return  userPermissionService.addUserPermission(id,permissionId,write);
     }
 
     @DeleteMapping("UserPermission/{id}")

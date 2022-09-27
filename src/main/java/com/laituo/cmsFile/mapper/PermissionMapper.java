@@ -34,6 +34,6 @@ public interface PermissionMapper extends BaseMapper<Permission> {
     List<MenuVo> getMenuList(String uid);
 
     @Select("SELECT permission.id,permission_name,path,father_id,is_menu FROM `user` INNER JOIN user_permission INNER JOIN permission WHERE user.id=#{id}" +
-            "             AND user.id=user_id AND permission_id=permission.id AND permission.flag=0 ORDER BY is_menu DESC")
+            "             AND user.id=user_id AND permission_id=permission.id AND permission.flag=0 AND permission.father_id!=0 ORDER BY is_menu DESC")
     List<MenuVo> getUserPermissionById(String id);
 }

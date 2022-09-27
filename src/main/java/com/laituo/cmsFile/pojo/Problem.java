@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.List;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)//不返回空字段
 @TableName("problem")
-@JsonIgnoreProperties(value = {"createdDate", "updateDate","updateTimestamp","createdTimestamp","flag"})
+@JsonIgnoreProperties(value = {"createdDate", "updateDate","updateTimestamp","flag"})//忽略的返回字段
 public class Problem {
 
     @TableId(type = IdType.AUTO)
@@ -36,7 +38,12 @@ public class Problem {
 
     private String userUid;
 
+    private Long updateId;
+
+    @Range(min = 0,max = 2,message = "问题类型有误")
     private Integer type;
+    @TableField(exist = false)//非数据库字段
+    private List<FileSrc> fileSrcList;
 
     private Integer flag;
 

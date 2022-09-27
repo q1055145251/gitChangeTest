@@ -59,6 +59,12 @@ public class PermissionController {
         return permissionService.getMenuTop();
     }
 
+    @GetMapping("/list")
+    @RequiresRoles("管理员")
+    public R getPermissionList(){
+        return permissionService.getPermissionList();
+    }
+
 
 
 

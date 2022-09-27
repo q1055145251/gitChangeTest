@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -116,7 +117,12 @@ class GlobalExceptionHandler {
         System.out.println(e.getMessage());
         return R.fail(ResultCode.BAD,"触发唯一键");
     }
-
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    public R error(ConstraintViolationException e){
+        log.error("运行时异常：----------------{}", e);
+        return R.fail(ResultCode.BAD,e.getMessage());
+    }
 
 
 

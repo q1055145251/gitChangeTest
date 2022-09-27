@@ -13,7 +13,7 @@ public interface UserPermissionService {
      * @param permissionId
      * @return
      */
-    R addUserPermission(String id,Integer permissionId);
+    R addUserPermission(String id,Integer permissionId,boolean write);
     /**
      * 删除用户的权限 52-4
      * @param permissionId

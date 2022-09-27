@@ -14,5 +14,6 @@ public interface FileSrcService {
 
     Map updateFiles(MultipartFile[] files);
 
-    void getList(List<Problem> records);
+
+    List<FileSrc> getList(List<Long> srcIdList);
 }

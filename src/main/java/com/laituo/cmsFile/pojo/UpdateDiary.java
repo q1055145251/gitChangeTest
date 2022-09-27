@@ -21,16 +21,16 @@ public class UpdateDiary {
 
     private String name;
 
-    private Float versions;
+    private Integer versionMin;
+
+    private Integer versionMax;
     private List<Long> srcId=new ArrayList<>();
 
     private List<Long> problemId;
 
-    private Integer permission_id;
+    private Integer permissionId;
 
     private String userUid;
-
-    private Integer type;
 
     private Integer flag;
 
@@ -47,10 +47,40 @@ public class UpdateDiary {
     private Integer updateTimestamp;
 
     public void setSrcId(String srcId) {
-        this.srcId = JSON.parseArray(srcId,Long.class);;
+        if (srcId==null){
+            return;
+        }
+        this.srcId = JSON.parseArray(srcId,Long.class);
+    }
+    public String getSrcId() {
+        if (srcId==null){
+            return null;
+        }
+        return JSON.toJSONString(srcId);
+    }
+    public void setSrcIdList(List srcId) {
+        this.srcId = srcId;
+    }
+    public List<Long> getSrcIdList() {
+        if (srcId==null){
+            return null;
+        }
+        return srcId;
     }
 
+
     public void setProblemId(String problemId) {
+        if (problemId==null){
+            return;
+        }
         this.problemId = JSON.parseArray(problemId,Long.class);
+    }
+
+
+    public String getProblemId() {
+        if (problemId==null){
+            return null;
+        }
+        return JSON.toJSONString(problemId);
     }
 }

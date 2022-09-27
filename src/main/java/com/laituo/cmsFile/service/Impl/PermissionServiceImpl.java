@@ -89,10 +89,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,Permissi
                 MenuVo o = (MenuVo) map.get(menuVos.get(i).getPid());//找到读写权限父级
                 if (o==null){//如果找不到父级，说明权限有误，将数据库该权限删除
                     permissionMapper.deleteById(menuVos.get(i).getId());
+                    menuVos.remove(i--);
                     continue;
                 }
                 o.setWrite(true);//赋予读写权限
-                menuVos.remove(i);//去掉读写权限显示
+                menuVos.remove(i--);//去掉读写权限显示
             }else {
                 map.put(menuVos.get(i).getId(),menuVos.get(i));
             }
@@ -110,6 +111,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,Permissi
     @Override
     public Permission getPermissionWriteByPid(Integer permission_id) {//获取项目的写权限标识
         return permissionMapper.selectOne(new QueryWrapper<Permission>().eq("father_id",permission_id).last("limit 1"));
+    }
+
+    @Override
+    public R getPermissionList() {
+        List<Permission> permissions = permissionMapper.selectList(new QueryWrapper<Permission>()
+                .eq(false,"father_id", 0)
+                .eq("is_menu",1));
+        List<MenuVo> menuVos = JSON.parseArray(JSON.toJSONString(permissions), MenuVo.class);
+        return R.success(menuVos);
     }
 
     @Override
